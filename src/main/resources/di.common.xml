@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd"
+       default-lazy-init="true">
+
+    <!-- controller -->
+
+    <bean id="createOfferController"
+          class="com.worldpay.offersapi.controller.CreateOfferController"
+          autowire="constructor">
+        <constructor-arg name="inputParameterValidator" ref="createOfferCompositeInputParameterValidator"/>
+    </bean>
+
+    <bean id="displayOfferController"
+          class="com.worldpay.offersapi.controller.DisplayOfferController"
+          autowire="constructor">
+        <constructor-arg name="inputParameterValidator" ref="offerOperationCompositeInputParameterValidator"/>
+    </bean>
+
+    <bean id="cancelOfferController"
+          class="com.worldpay.offersapi.controller.CancelOfferController"
+          autowire="constructor">
+        <constructor-arg name="inputParameterValidator" ref="offerOperationCompositeInputParameterValidator"/>
+    </bean>
+
+
+    <!-- domain -->
+
+    <!-- domain.entity -->
+
+    <bean id="offerInitializingFactory"
+          class="com.worldpay.offersapi.domain.entity.OfferInitializingFactory"
+          autowire="constructor"/>
+
+    <!-- domain.behaviour -->
+
+    <bean id="createOfferBehaviour"
+          class="com.worldpay.offersapi.domain.behaviour.CreateOfferBehaviour"
+          autowire="constructor"/>
+
+    <bean id="displayOfferBehaviour"
+          class="com.worldpay.offersapi.domain.behaviour.DisplayOfferBehaviour"
+          autowire="constructor"/>
+
+    <bean id="cancelOfferBehaviour"
+          class="com.worldpay.offersapi.domain.behaviour.CancelOfferBehaviour"
+          autowire="constructor"/>
+
+    <!-- domain.validator -->
+
+    <bean id="merchantIdInputParameterValidator"
+          class="com.worldpay.offersapi.domain.validator.MerchantIdInputParameterValidator"
+          autowire="constructor"/>
+
+    <bean id="offerIdInputParameterValidator"
+          class="com.worldpay.offersapi.domain.validator.OfferIdInputParameterValidator"
+          autowire="constructor"/>
+
+    <bean id="descriptionInputParameterValidator"
+          class="com.worldpay.offersapi.domain.validator.DescriptionInputParameterValidator"
+          autowire="constructor"/>
+
+    <bean id="currencyInputParameterValidator"
+          class="com.worldpay.offersapi.domain.validator.CurrencyInputParameterValidator"
+          autowire="constructor"/>
+
+    <bean id="priceInputParameterValidator"
+          class="com.worldpay.offersapi.domain.validator.PriceInputParameterValidator"
+          autowire="constructor"/>
+
+    <bean id="expiryTimeInputParameterValidator"
+          class="com.worldpay.offersapi.domain.validator.ExpiryTimeInputParameterValidator"
+          autowire="constructor"/>
+
+    <bean id="createOfferCompositeInputParameterValidator"
+          class="com.worldpay.offersapi.domain.validator.CompositeInputParameterValidator"
+          autowire="constructor">
+        <constructor-arg>
+            <list>
+                <ref bean="merchantIdInputParameterValidator"/>
+                <ref bean="descriptionInputParameterValidator"/>
+                <ref bean="currencyInputParameterValidator"/>
+                <ref bean="priceInputParameterValidator"/>
+                <ref bean="expiryTimeInputParameterValidator"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="offerOperationCompositeInputParameterValidator"
+          class="com.worldpay.offersapi.domain.validator.CompositeInputParameterValidator"
+          autowire="constructor">
+        <constructor-arg>
+            <list>
+                <ref bean="merchantIdInputParameterValidator"/>
+                <ref bean="offerIdInputParameterValidator"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <!-- domain.mapper -->
+
+    <bean id="requestParameterToFieldParameterMapper"
+          class="com.worldpay.offersapi.domain.mapper.RequestParameterToFieldParameterMapper"
+          autowire="constructor"/>
+
+
+    <!-- infrastructure -->
+
+    <!-- infrastructure.memory -->
+
+    <bean id="inMemoryOfferDataStore"
+          class="com.worldpay.offersapi.infrastructure.memory.InMemoryOfferDataStore"
+          autowire="constructor">
+        <constructor-arg name="expiryCheckRefreshIntervalMs" type="int" value="${app.expiryCheckRefreshInterval.ms}"/>
+    </bean>
+
+    <!-- infrastructure.sparkjava -->
+
+    <bean id="sparkJavaRoutingHandler"
+          class="com.worldpay.offersapi.infrastructure.sparkjava.SparkJavaRoutingManager"
+          autowire="constructor">
+        <constructor-arg name="httpServerPort" type="int" value="${http.server.port}" />
+    </bean>
+
+    <bean id="jsonResponseTransformer"
+          class="com.worldpay.offersapi.infrastructure.sparkjava.JsonResponseTransformer"
+          autowire="constructor"/>
+
+
+    <!-- library -->
+
+    <bean id="threadSleeper"
+          class="com.worldpay.offersapi.library.ThreadSleeper"
+          autowire="constructor"/>
+
+
+</beans>
